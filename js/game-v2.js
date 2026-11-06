@@ -1045,8 +1045,6 @@
         gameState.cameraY = 0;
         gameState.particles = [];
         gameState.soundWaves = [];
-        gameState.floatingTexts = [];
-        updateHUD();
         updateLevelButtons();
       }
 
@@ -1059,7 +1057,6 @@
         player.hp = player.maxHp;
         player.invulnTimer = 1.2;
         spawnBurst(player.x + player.w / 2, player.y + player.h / 2, '#f59e0b', 22);
-        updateHUD();
       }
 
       function spawnBurst(x, y, color, count = 14) {
@@ -1080,16 +1077,6 @@
         }
       }
 
-      function addFloatingText(x, y, text, color = '#fbbf24') {
-        gameState.floatingTexts.push({
-          x,
-          y,
-          text,
-          color,
-          life: 1.0
-        });
-      }
-
       function triggerJump() {
         if (gameState.mode !== 'playing') return;
 
@@ -1104,7 +1091,6 @@
           player.jumpsLeft = 1;
           sound.sfxVineLaunch();
           spawnBurst(player.x + player.w / 2, player.y + player.h / 2, '#34d399', 16);
-          addFloatingText(player.x + player.w / 2, player.y - 10, '¡Salto en Liana! 🌿', '#6ee7b7');
           return;
         }
 
@@ -1119,7 +1105,6 @@
           player.jumpsLeft--;
           sound.sfxJump(true);
           spawnBurst(player.x + player.w / 2, player.y + player.h * 0.7, '#f59e0b', 14);
-          addFloatingText(player.x + player.w / 2, player.y, '¡Aleteo! 𝄞', '#e879f9');
         }
       }
 
@@ -1138,7 +1123,6 @@
           facing: player.facing
         });
         spawnBurst(player.x + player.w / 2 + player.facing * 25, player.y + player.h * 0.5, '#c084fc', 10);
-        updateHUD();
       }
 
       function triggerDash() {
@@ -1230,7 +1214,6 @@
                 player.jumpsLeft = 2;
                 sound.sfxVineGrab();
                 spawnBurst(rx, ry, '#4ade80', 10);
-                addFloatingText(rx, ry - 15, '¡Liana! [◀/▶ Balancear, ▲ Saltar]', '#86efac');
                 break;
               }
             }
@@ -1331,8 +1314,6 @@
             if (player.invulnTimer <= 0) {
               player.hp--;
               player.invulnTimer = 1.25;
-              addFloatingText(pxCenter, wp.y - 20, '¡Agua Profunda! 💦', '#38bdf8');
-              updateHUD();
               if (player.hp <= 0) {
                 respawnAtCheckpoint();
               }
@@ -1356,8 +1337,6 @@
               player.vy = -420;
               sound.sfxHurt();
               spawnBurst(pxCenter, tr.y - 12, '#ef4444', 16);
-              addFloatingText(pxCenter, tr.y - 30, tr.type === 'spikes' ? '¡Trampa de Bambú!' : '¡Planta Carnívora!', '#fca5a5');
-              updateHUD();
               if (player.hp <= 0) respawnAtCheckpoint();
             }
           }
@@ -1378,7 +1357,6 @@
             bp.bounceAnim = 1.0;
             sound.sfxBounce();
             spawnBurst(bp.x + bp.w / 2, bp.y, '#fbbf24', 16);
-            addFloatingText(bp.x + bp.w / 2, bp.y - 15, '¡Impulso Musical! ♫', '#fbbf24');
           }
           if (bp.bounceAnim > 0) bp.bounceAnim = Math.max(0, bp.bounceAnim - dt * 4);
         }
@@ -1394,8 +1372,6 @@
               player.harmony = Math.min(100, player.harmony + 10);
               sound.sfxNote();
               spawnBurst(n.x, n.y, '#fbbf24', 10);
-              addFloatingText(n.x, n.y - 10, '+50 ♪', '#fde047');
-              updateHUD();
             }
           }
         }
@@ -1411,8 +1387,6 @@
               player.hp = Math.min(player.maxHp, player.hp + 1);
               sound.sfxClef();
               spawnBurst(c.x, c.y, '#e879f9', 24);
-              addFloatingText(c.x, c.y - 18, '¡Clave de Sol 𝄞 +300!', '#f0abfc');
-              updateHUD();
             }
           }
         }
@@ -1426,8 +1400,6 @@
             gameState.score += 100;
             sound.sfxCheckpoint();
             spawnBurst(cp.x, cp.y - 25, '#34d399', 18);
-            addFloatingText(cp.x, cp.y - 45, '¡Control: ' + cp.name + '!', '#6ee7b7');
-            updateHUD();
           }
         }
 
@@ -1446,13 +1418,10 @@
               if (en.hp <= 0 && en.type !== 'croc') {
                 en.alive = false;
                 gameState.score += 150;
-                addFloatingText(en.x, en.y - 20, '¡Armonizado! +150', '#c084fc');
               } else {
                 en.stun = 2.2;
                 en.hp = Math.max(1, en.hp);
-                addFloatingText(en.x, en.y - 20, '¡Aturdido! 𝄞', '#fbbf24');
               }
-              updateHUD();
             }
           }
           if (sw.life <= 0) gameState.soundWaves.splice(i, 1);
@@ -1509,8 +1478,6 @@
                 en.dodgedAwarded = true;
                 gameState.score += 75;
                 sound.sfxDodgePerfect();
-                addFloatingText(pxCenter, player.y - 16, '¡Esquivada! +75 ✨', '#67e8f9');
-                updateHUD();
               }
               if (en.stateTime <= 0 || en.y > 435) {
                 en.attackState = 'recover';
@@ -1555,7 +1522,6 @@
               player.jumpsLeft = 2;
               sound.sfxBounce();
               spawnBurst(en.x, en.y - 10, '#4ade80', 14);
-              addFloatingText(en.x, en.y - 25, '¡Salto sobre Cocodrilo! 🐊', '#86efac');
             } else if (en.type !== 'croc' && player.vy > 60 && pyCenter < en.y - 6) {
               en.hp--;
               player.vy = -465;
@@ -1565,13 +1531,10 @@
               if (en.hp <= 0) {
                 en.alive = false;
                 gameState.score += isDragonfly ? 200 : 150;
-                addFloatingText(en.x, en.y - 20, isDragonfly ? '¡Libélula Superada! +200' : '¡Salto Armónico! +150', '#fde047');
               } else {
                 en.stun = 1.6;
                 en.attackState = 'patrol';
-                addFloatingText(en.x, en.y - 20, '¡Golpe Real!', '#fbbf24');
               }
-              updateHUD();
             } else if (player.invulnTimer <= 0 && player.dashTimer <= 0) {
               player.hp--;
               player.invulnTimer = 1.25;
@@ -1580,11 +1543,6 @@
               if (en.type === 'croc') sound.sfxCrocSnap();
               else sound.sfxHurt();
               spawnBurst(pxCenter, pyCenter, '#ef4444', 16);
-              const hurtMsg = en.type === 'croc'
-                ? '¡Mordisco de Cocodrilo! 🐊'
-                : (isDragonfly ? '¡Ataque de Libélula Gigante! ¡Esquiva con [Shift] o Salto!' : '¡Cuidado!');
-              addFloatingText(pxCenter, player.y - 10, hurtMsg, '#fca5a5');
-              updateHUD();
               if (player.hp <= 0) {
                 respawnAtCheckpoint();
               }
@@ -1614,7 +1572,7 @@
             gameState.mode = 'level_complete';
             showStatusModal(
               '¡Nivel 1 Completado!',
-              'Has cruzado el Bosque Melódico con el soundtrack de flautas saltarinas. ¡Avanza al Nivel 2: Cumbres del Reloj!',
+              'Has cruzado el Bosque Melódico. ¡Avanza al Nivel 2: Cumbres del Reloj!',
               '▶ Avanzar al Nivel 2'
             );
           } else if (gameState.levelNum === 2) {
@@ -1634,7 +1592,6 @@
           } else {
             g.opened = true;
             gameState.score += 1500;
-            updateHUD();
             gameState.mode = 'victory';
             showStatusModal(
               "¡PETRONIA'S TREASURE ES TUYO!",
@@ -1644,7 +1601,7 @@
           }
         }
 
-        // Particles & Floating Texts
+        // Particles
         for (let i = gameState.particles.length - 1; i >= 0; i--) {
           const pt = gameState.particles[i];
           pt.x += pt.vx * dt;
@@ -1653,20 +1610,11 @@
           pt.life -= dt;
           if (pt.life <= 0) gameState.particles.splice(i, 1);
         }
-        for (let i = gameState.floatingTexts.length - 1; i >= 0; i--) {
-          const ft = gameState.floatingTexts[i];
-          ft.y -= 38 * dt;
-          ft.life -= dt;
-          if (ft.life <= 0) gameState.floatingTexts.splice(i, 1);
-        }
-
         const viewW = canvas.width;
         const targetCamX = Math.max(0, Math.min(lvl.worldWidth - viewW, player.x - viewW * 0.36));
         gameState.cameraX += (targetCamX - gameState.cameraX) * Math.min(1, dt * 7.5);
 
-        const progressPct = Math.min(100, Math.max(0, ((player.x - 100) / (lvl.goal.x - 100)) * 100));
-        const progEl = document.getElementById('hudProgressBar');
-        if (progEl) progEl.style.width = progressPct.toFixed(1) + '%';
+
       }
 
       // =========================================================================
@@ -2571,19 +2519,6 @@
           ctx.restore();
         }
 
-        for (const ft of gameState.floatingTexts) {
-          ctx.save();
-          ctx.globalAlpha = Math.max(0, ft.life);
-          ctx.font = 'bold 15px Fredoka, sans-serif';
-          ctx.fillStyle = ft.color;
-          ctx.strokeStyle = '#1e1b4b';
-          ctx.lineWidth = 3;
-          ctx.textAlign = 'center';
-          ctx.strokeText(ft.text, ft.x - camX, ft.y);
-          ctx.fillText(ft.text, ft.x - camX, ft.y);
-          ctx.restore();
-        }
-
         // 15. Foreground Parallax Layer 6
         ctx.save();
         const fgOffset = -(camX * 1.28 * pbrConfig.parallaxScale) % 480;
@@ -2670,59 +2605,37 @@
       // =========================================================================
       // 8. HUD, MODALS, RESIZE & INPUT EVENT LISTENERS
       // =========================================================================
-      function updateHUD() {
-        const lvl = gameState.level;
-        const collectedNotes = lvl.notes.filter(n => n.collected).length;
-        const collectedClefs = lvl.clefs.filter(c => c.collected).length;
-
-        document.getElementById('hudNotes').textContent = `${collectedNotes} / ${lvl.notes.length}`;
-        document.getElementById('hudClefs').textContent = `${collectedClefs} / ${lvl.clefs.length}`;
-        document.getElementById('hudScore').textContent = String(gameState.score).padStart(4, '0');
-        document.getElementById('hudLevelTitle').textContent = lvl.name;
-        document.getElementById('hudHarmonyBar').style.width = `${Math.round(player.harmony)}%`;
-
-        const heartsEl = document.getElementById('hudHearts');
-        let heartsHtml = '';
-        for (let i = 0; i < player.maxHp; i++) {
-          heartsHtml += i < player.hp ? '<span>❤️</span>' : '<span class="opacity-30">🖤</span>';
-        }
-        heartsEl.innerHTML = heartsHtml;
-      }
+      const statusDialog = document.getElementById('statusModal');
 
       function updateLevelButtons() {
-        const btns = [
-          { el: document.getElementById('btnLevel1'), num: 1 },
-          { el: document.getElementById('btnLevel2'), num: 2 },
-          { el: document.getElementById('btnLevel3'), num: 3 },
-          { el: document.getElementById('btnLevel4'), num: 4 }
-        ];
-        btns.forEach(b => {
-          if (!b.el) return;
-          if (gameState.levelNum === b.num) {
-            b.el.classList.add('ring-2', 'ring-amber-400');
-            b.el.classList.remove('opacity-85');
-          } else {
-            b.el.classList.remove('ring-2', 'ring-amber-400');
-            b.el.classList.add('opacity-85');
-          }
-        });
+        canvas.setAttribute('aria-label', gameState.level.name);
+        for (let level = 1; level <= 4; level++) {
+          document.getElementById('btnLevel' + level).setAttribute('aria-current', String(level === gameState.levelNum));
+        }
       }
 
       function showStatusModal(title, desc, primaryLabel) {
         const lvl = gameState.level;
         const collectedNotes = lvl.notes.filter(n => n.collected).length;
         const collectedClefs = lvl.clefs.filter(c => c.collected).length;
+        document.getElementById('levelName').textContent = lvl.name;
+        document.getElementById('modalPetroniaImg').hidden = gameState.mode === 'paused';
+        document.getElementById('statLives').textContent = player.hp + '/' + player.maxHp;
+        document.getElementById('statHarmony').textContent = Math.round(player.harmony) + '%';
         document.getElementById('modalTitle').textContent = title;
         document.getElementById('modalDesc').textContent = desc;
         document.getElementById('btnModalPrimary').textContent = primaryLabel;
         document.getElementById('statNotes').textContent = `${collectedNotes}/${lvl.notes.length}`;
         document.getElementById('statClefs').textContent = `${collectedClefs}/${lvl.clefs.length}`;
         document.getElementById('statScore').textContent = gameState.score;
-        document.getElementById('statusModal').classList.remove('hidden');
+        document.getElementById('pbrPanel').open = false;
+        clearInputs();
+        if (!statusDialog.open) statusDialog.showModal();
+        statusDialog.scrollTop = 0;
       }
 
       function hideStatusModal() {
-        document.getElementById('statusModal').classList.add('hidden');
+        if (statusDialog.open) statusDialog.close();
       }
 
       let introTimer;
@@ -2772,7 +2685,6 @@
         document.getElementById('btnStartGame').focus({ preventScroll: true });
         window.scrollTo(0, 0);
       }
-      bindClick('btnShowCover', showCover);
       bindClick('btnModalCover', showCover);
 
       bindClick('btnModalPrimary', () => {
@@ -2780,8 +2692,7 @@
           const nextLvl = gameState.levelNum === 1 ? 2 : (gameState.levelNum === 2 ? 3 : 4);
           startLevel(nextLvl, true);
         } else if (gameState.mode === 'paused') {
-          hideStatusModal();
-          gameState.mode = 'playing';
+          resumeGame();
         } else {
           startLevel(1, false);
         }
@@ -2791,26 +2702,63 @@
         startLevel(gameState.levelNum, false);
       });
 
+      function resumeGame() {
+        hideStatusModal();
+        gameState.mode = 'playing';
+        canvas.focus({ preventScroll: true });
+      }
+
       bindClick('btnPause', () => {
-        if (gameState.mode === 'playing') {
-          clearInputs();
-          gameState.mode = 'paused';
-          showStatusModal(
-            'Juego en Pausa',
-            'Cambia entre el Bosque (Nivel 1), las Cumbres (Nivel 2), la Selva (Nivel 3) y la Cueva de las Libélulas Gigantes (Nivel 4).',
-            '▶ Continuar'
-          );
-        } else if (gameState.mode === 'paused') {
-          hideStatusModal();
-          gameState.mode = 'playing';
-        }
+        if (gameState.mode !== 'playing') return;
+        gameState.mode = 'paused';
+        showStatusModal('Juego en pausa', '', 'Continuar');
+      });
+
+      statusDialog.addEventListener('cancel', (event) => {
+        event.preventDefault();
+        if (gameState.mode === 'paused') resumeGame();
       });
 
       bindClick('btnAudioToggle', () => {
         const isOn = sound.toggle();
         document.getElementById('btnAudioToggle').setAttribute('aria-pressed', String(isOn));
-        document.getElementById('audioIcon').textContent = isOn ? '🔊' : '🔇';
-        document.getElementById('audioLabel').textContent = isOn ? 'Efectos ON' : 'Efectos OFF';
+      });
+
+      const fullscreenButton = document.getElementById('btnFullscreen');
+      const viewHint = document.getElementById('gameViewHint');
+      const portraitTouch = matchMedia('(orientation: portrait) and (any-pointer: coarse)');
+      const touchScreen = matchMedia('(any-pointer: coarse)');
+
+      function updateViewHint() {
+        viewHint.textContent = portraitTouch.matches ? 'Girá el celular para jugar en horizontal' : '';
+      }
+
+      fullscreenButton.hidden = !document.fullscreenEnabled;
+      updateViewHint();
+      portraitTouch.addEventListener('change', updateViewHint);
+      screen.orientation?.addEventListener('change', clearInputs);
+      document.addEventListener('fullscreenchange', () => {
+        clearInputs();
+        fullscreenButton.setAttribute('aria-pressed', String(Boolean(document.fullscreenElement)));
+        updateViewHint();
+      });
+
+      bindClick('btnFullscreen', async () => {
+        try {
+          if (document.fullscreenElement) {
+            await document.exitFullscreen();
+          } else {
+            await document.documentElement.requestFullscreen({ navigationUI: 'hide' });
+            if (touchScreen.matches && screen.orientation?.lock) {
+              await screen.orientation.lock('landscape').catch(() => {});
+            }
+          }
+        } catch {
+          viewHint.textContent = portraitTouch.matches
+            ? 'Girá el celular para jugar en horizontal'
+            : 'Tu navegador no habilitó la pantalla completa';
+        }
+        canvas.focus({ preventScroll: true });
       });
 
       const shareDialog = document.getElementById('shareAppModal');
@@ -2850,13 +2798,6 @@
         } catch (error) {
           if (error.name !== 'AbortError') await copyLink();
         }
-      });
-
-      document.getElementById('btnPbrSettings').addEventListener('click', () => {
-        document.getElementById('pbrPanel').classList.toggle('hidden');
-      });
-      document.getElementById('btnClosePbr').addEventListener('click', () => {
-        document.getElementById('pbrPanel').classList.add('hidden');
       });
 
       document.getElementById('sliderNormal').addEventListener('input', (e) => {
@@ -2952,7 +2893,6 @@
 
       window.onload = function () {
         resizeCanvas();
-        updateHUD();
         requestAnimationFrame(loop);
       };
       if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) {

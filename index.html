@@ -25,11 +25,10 @@
   <link rel="manifest" href="manifest.json">
   <link rel="icon" type="image/png" href="assets/icon_192.png">
   <link rel="apple-touch-icon" href="assets/icon_192.png">
-  <link rel="stylesheet" href="css/game.css">
-  <link rel="stylesheet" href="css/intro.css">
+  <link rel="stylesheet" href="css/game-v2.css">
+  <link rel="stylesheet" href="css/ui-v2.css">
 </head>
-<body data-screen="intro" class="min-h-screen flex flex-col justify-between p-2 sm:p-3 md:p-4">
-
+<body data-screen="intro">
 
   <main id="startModal" class="opening" aria-labelledby="openingTitle">
     <h1 id="openingTitle" class="sr-only">Sparrow’s Tale: Petronia and the Hidden Treasure</h1>
@@ -53,235 +52,77 @@
     <noscript><p>Activa JavaScript en tu navegador para jugar.</p></noscript>
   </main>
 
-  <!-- TOP HEADER: SPARROW'S TALE & PETRONIA'S TREASURE -->
-  <header class="game-ui w-full max-w-6xl mx-auto mb-2">
-    <div class="pbr-card rounded-2xl px-3 py-2 sm:px-4 sm:py-2.5 flex flex-wrap items-center justify-between gap-2">
-      <!-- Brand & Title Hierarchy -->
-      <div class="flex items-center gap-2.5 sm:gap-3">
-        <button type="button" class="relative w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-fuchsia-500 via-purple-700 to-indigo-950 p-0.5 shadow-lg border border-amber-300/50 flex-shrink-0 overflow-hidden cursor-pointer" id="btnShowCover" aria-label="Volver a la portada" title="Volver a la portada">
-          <img id="headerAvatar" src="assets/sprites/petronia_front.png" alt="Petronia" class="w-full h-full object-contain drop-shadow" />
-        </button>
-        <div>
-          <div class="flex items-center gap-1.5">
-            <span class="inline-block w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
-            <span class="font-cartoon uppercase tracking-[0.2em] text-[10px] sm:text-xs font-bold text-amber-300 text-glow-purple">
-              SPARROW'S TALE
-            </span>
-            <span class="hidden md:inline-block text-[10px] px-2 py-0.5 rounded-full bg-cyan-950/90 text-cyan-200 border border-cyan-400/40 font-semibold">
-              🎶 Flautas Disney • 4 Niveles
-            </span>
-          </div>
-          <h1 class="font-cartoon text-base sm:text-xl md:text-2xl font-bold text-amber-300 tracking-wide leading-tight text-glow-gold">
-            PETRONIA'S TREASURE <span class="text-xs sm:text-sm font-normal text-purple-200/90 hidden sm:inline">(El Tesoro de Petronia)</span>
-          </h1>
-        </div>
+  <main class="game-ui game-session" aria-label="Partida de Petronia">
+    <div class="game-bar">
+      <p id="gameViewHint" class="game-view-hint" role="status"></p>
+      <button id="btnFullscreen" class="game-tool" type="button" aria-pressed="false" hidden>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path d="M8 3H3v5m13-5h5v5M3 16v5h5m13-5v5h-5" />
+        </svg>
+        <span>Pantalla completa</span>
+      </button>
+      <button id="btnPause" class="game-tool" type="button" aria-haspopup="dialog">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <rect x="6" y="5" width="4" height="14" rx="1" /><rect x="14" y="5" width="4" height="14" rx="1" />
+        </svg>
+        Pausa
+      </button>
+    </div>
+    <div class="game-playfield">
+      <div id="viewportContainer" class="game-viewport">
+        <canvas id="gameCanvas" tabindex="-1" aria-label="Juego de plataformas de Petronia"></canvas>
       </div>
-
-      <!-- Level Switcher (4 Levels) & App / Audio Controls -->
-      <div class="flex flex-wrap items-center gap-1 sm:gap-1.5">
-        <button id="btnLevel1" type="button" class="pbr-btn px-2 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1 ring-2 ring-amber-400">
-          <span>🌲</span>
-          <span class="hidden sm:inline">Nivel 1:</span><span>Bosque</span>
-        </button>
-        <button id="btnLevel2" type="button" class="pbr-btn px-2 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1 opacity-85">
-          <span>⚙️</span>
-          <span class="hidden sm:inline">Nivel 2:</span><span>Cumbres</span>
-        </button>
-        <button id="btnLevel3" type="button" class="pbr-btn-emerald px-2 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1 opacity-85">
-          <span>🌴</span>
-          <span class="hidden sm:inline">Nivel 3:</span><span>Selva</span>
-        </button>
-        <button id="btnLevel4" type="button" class="pbr-btn-cavern px-2.5 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1 text-cyan-50 opacity-95" title="Nivel 4: La Cueva de las Libélulas Gigantes (Dificultad Alta)">
-          <span>💎</span>
-          <span>Nivel 4: Cueva</span>
-        </button>
-        <button id="btnShareApp" aria-label="Compartir" type="button" class="pbr-btn-gold px-2.5 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1 cursor-pointer" title="Compartir enlace del juego">
-          <span>📲</span>
-          <span class="hidden sm:inline">Compartir</span>
-        </button>
-        <button id="btnPbrSettings" type="button" class="pbr-btn px-2 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1" title="Ajustes de Textura PBR y 2.5D">
-          <span>✨</span>
-        </button>
-        <button id="btnAudioToggle" type="button" class="pbr-btn px-2 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1" title="Efectos de sonido" aria-label="Efectos de sonido" aria-pressed="true">
-          <span id="audioIcon">🔊</span>
-          <span id="audioLabel" class="hidden lg:inline">Efectos ON</span>
-        </button>
-        <button id="btnPause" type="button" class="pbr-btn px-2 py-1.5 rounded-xl text-xs font-semibold" title="Pausar / Menú">
-          ⏸️
-        </button>
+      <div class="game-controls game-controls-move" role="group" aria-label="Movimiento">
+        <button id="touchLeft" class="touch-btn" type="button" aria-label="Izquierda"><span aria-hidden="true">◀</span></button>
+        <button id="touchRight" class="touch-btn" type="button" aria-label="Derecha"><span aria-hidden="true">▶</span></button>
+      </div>
+      <div class="game-controls game-controls-actions" role="group" aria-label="Acciones">
+        <button id="touchWave" class="touch-btn" type="button" aria-label="Onda musical"><span aria-hidden="true">𝄞</span><small>Onda</small></button>
+        <button id="touchDash" class="touch-btn" type="button" aria-label="Esquivar"><span aria-hidden="true">💨</span><small>Esquivar</small></button>
+        <button id="touchJump" class="touch-btn" type="button" aria-label="Saltar"><span aria-hidden="true">▲</span><small>Saltar</small></button>
       </div>
     </div>
-  </header>
-
-  <!-- MAIN GAME VIEWPORT CONTAINER -->
-  <main class="game-ui w-full max-w-6xl mx-auto flex-1 flex flex-col justify-center">
-    <div id="viewportContainer" class="relative w-full aspect-[16/9] game-viewport rounded-2xl overflow-hidden border-2 border-purple-300/35 shadow-2xl bg-slate-950">
-
-      <!-- HTML5 2.5D PBR Canvas -->
-      <canvas id="gameCanvas" tabindex="-1" aria-label="Juego de plataformas de Petronia"></canvas>
-
-      <!-- IN-GAME HUD OVERLAY -->
-      <div id="hudOverlay" class="pointer-events-none absolute inset-x-0 top-0 p-2.5 sm:p-4 flex flex-wrap items-start justify-between gap-2 z-10">
-        <!-- Left HUD: Petronia Status, Hearts & Musical Energy -->
-        <div class="pbr-card rounded-xl px-3 py-2 flex items-center gap-3">
-          <div class="flex flex-col gap-1">
-            <div class="flex items-center gap-1.5">
-              <span class="font-cartoon text-xs sm:text-sm font-bold text-purple-200">PETRONIA</span>
-              <div id="hudHearts" class="flex items-center gap-0.5 text-sm sm:text-base">
-                <span>❤️</span><span>❤️</span><span>❤️</span><span>❤️</span>
-              </div>
-            </div>
-            <!-- Musical Harmony Bar -->
-            <div class="w-28 sm:w-36 h-2 bg-purple-950 rounded-full overflow-hidden border border-purple-400/30">
-              <div id="hudHarmonyBar" class="h-full bg-gradient-to-r from-fuchsia-400 via-cyan-400 to-amber-300 transition-all duration-150" style="width: 100%;"></div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Center HUD: Current Level Banner & Progress -->
-        <div class="pbr-card rounded-xl px-3 py-1.5 hidden sm:flex flex-col items-center min-w-[240px]">
-          <div class="text-[10px] uppercase tracking-widest text-amber-300 font-bold">SPARROW'S TALE • PETRONIA'S TREASURE</div>
-          <div id="hudLevelTitle" class="font-cartoon text-xs sm:text-sm text-white font-semibold">Nivel 1: Bosque Melódico</div>
-          <div class="w-full h-1.5 bg-slate-900 rounded-full mt-1 overflow-hidden border border-white/15">
-            <div id="hudProgressBar" class="h-full bg-gradient-to-r from-emerald-400 via-cyan-400 to-amber-400 transition-all duration-150" style="width: 0%;"></div>
-          </div>
-        </div>
-
-        <!-- Right HUD: Collectibles (Golden Notes, Treble Clefs, Score) -->
-        <div class="pbr-card rounded-xl px-3 py-2 flex items-center gap-3 text-xs sm:text-sm font-bold">
-          <div class="flex items-center gap-1 text-amber-300" title="Notas Doradas">
-            <span class="text-base">♪</span>
-            <span id="hudNotes">0 / 25</span>
-          </div>
-          <div class="h-4 w-px bg-purple-400/30"></div>
-          <div class="flex items-center gap-1 text-fuchsia-300" title="Claves de Sol Secretas">
-            <span class="text-base">𝄞</span>
-            <span id="hudClefs">0 / 3</span>
-          </div>
-          <div class="h-4 w-px bg-purple-400/30"></div>
-          <div class="flex items-center gap-1 text-emerald-300" title="Puntuación">
-            <span>★</span>
-            <span id="hudScore">0000</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- PBR 2.5D INSPECTOR / CALIBRATOR POPOVER -->
-      <div id="pbrPanel" class="hidden absolute top-16 right-3 z-30 w-72 pbr-card rounded-2xl p-4 text-xs space-y-3 border border-amber-300/40">
-        <div class="flex items-center justify-between border-b border-purple-300/20 pb-2">
-          <span class="font-cartoon text-sm font-bold text-amber-300">✨ Motor Cartoon 2.5D PBR</span>
-          <button id="btnClosePbr" type="button" class="text-purple-200 hover:text-white font-bold px-1.5">✕</button>
-        </div>
-        <div class="space-y-2">
-          <label class="flex items-center justify-between">
-            <span class="text-purple-100">Relieve Normal Map (PBR):</span>
-            <input id="sliderNormal" type="range" min="0" max="200" value="120" class="w-28 accent-amber-400" />
-          </label>
-          <label class="flex items-center justify-between">
-            <span class="text-purple-100">Brillo Especular (Roughness):</span>
-            <input id="sliderSpecular" type="range" min="0" max="200" value="135" class="w-28 accent-amber-400" />
-          </label>
-          <label class="flex items-center justify-between">
-            <span class="text-purple-100">Extrusión Profundidad 2.5D:</span>
-            <input id="sliderDepth" type="range" min="8" max="42" value="24" class="w-28 accent-amber-400" />
-          </label>
-          <label class="flex items-center justify-between">
-            <span class="text-purple-100">Intensidad Parallax (6 Capas):</span>
-            <input id="sliderParallax" type="range" min="20" max="180" value="100" class="w-28 accent-amber-400" />
-          </label>
-        </div>
-        <p class="text-[11px] text-purple-200/80 leading-relaxed">
-          Incluye texturas PBR de Roca Cristalina para el Nivel 4 (La Cueva de las Libélulas Gigantes).
-        </p>
-      </div>
-
-      <!-- LEVEL COMPLETE / VICTORY / PAUSE MODAL -->
-      <div id="statusModal" class="hidden absolute inset-0 z-20 flex items-center justify-center bg-slate-950/80 backdrop-blur-sm p-4">
-        <div class="pbr-card max-w-md w-full rounded-3xl p-5 sm:p-6 text-center border-2 border-amber-300/50 shadow-2xl">
-          <div class="text-xs font-cartoon uppercase tracking-[0.2em] text-amber-300 mb-1">SPARROW'S TALE • PETRONIA'S TREASURE</div>
-          <h3 id="modalTitle" class="font-cartoon text-2xl sm:text-3xl font-bold text-amber-300 text-glow-gold mb-2">
-            ¡Nivel Completado!
-          </h3>
-          <div class="flex justify-center my-2">
-            <img id="modalPetroniaImg" src="assets/sprites/petronia_celebrate.png" alt="Petronia" class="h-24 sm:h-28 object-contain drop-shadow-xl" />
-          </div>
-          <p id="modalDesc" class="text-xs sm:text-sm text-purple-100 mb-4 leading-relaxed">
-            Has cruzado el portal ancestral.
-          </p>
-          <div id="modalStats" class="grid grid-cols-3 gap-2 bg-purple-950/75 p-3 rounded-2xl border border-purple-400/25 mb-4 text-xs">
-            <div>
-              <div class="text-purple-300">Notas ♪</div>
-              <div id="statNotes" class="font-cartoon text-base text-amber-300 font-bold">0/0</div>
-            </div>
-            <div>
-              <div class="text-purple-300">Claves 𝄞</div>
-              <div id="statClefs" class="font-cartoon text-base text-fuchsia-300 font-bold">0/3</div>
-            </div>
-            <div>
-              <div class="text-purple-300">Puntos ★</div>
-              <div id="statScore" class="font-cartoon text-base text-emerald-300 font-bold">0</div>
-            </div>
-          </div>
-          <div class="flex flex-wrap justify-center gap-2.5">
-            <button id="btnModalPrimary" type="button" class="pbr-btn-gold font-cartoon text-base font-bold px-5 py-2.5 rounded-2xl cursor-pointer">
-              Continuar
-            </button>
-            <button id="btnModalRestart" type="button" class="pbr-btn font-cartoon text-sm font-semibold px-4 py-2.5 rounded-2xl cursor-pointer">
-              Reiniciar Nivel
-            </button>
-            <button id="btnModalCover" type="button" class="pbr-btn-cavern font-cartoon text-xs font-semibold px-3 py-2.5 rounded-2xl cursor-pointer">
-              Carátula
-            </button>
-          </div>
-        </div>
-      </div>
-
-    </div>
-
-      <!-- ON-SCREEN TOUCH / MOUSE CONTROLS FOR MOBILE & TABLET -->
-      <div class="game-touch-controls flex items-center justify-between gap-2 p-2">
-        <!-- D-Pad Left / Right -->
-        <div class="flex items-center gap-2 pointer-events-auto">
-          <button id="touchLeft" type="button" class="touch-btn w-12 h-12 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center text-xl font-bold text-white" aria-label="Izquierda">
-            ◀
-          </button>
-          <button id="touchRight" type="button" class="touch-btn w-12 h-12 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center text-xl font-bold text-white" aria-label="Derecha">
-            ▶
-          </button>
-        </div>
-        <!-- Action Buttons: Musical Pulse, Dash, Jump/Liana -->
-        <div class="flex items-center gap-2 pointer-events-auto">
-          <button id="touchWave" type="button" class="touch-btn w-12 h-12 sm:w-14 sm:h-14 rounded-2xl flex flex-col items-center justify-center text-xs font-bold text-fuchsia-200" aria-label="Onda Musical">
-            <span class="text-base leading-none">𝄞</span>
-            <span class="text-[9px]">ONDA</span>
-          </button>
-          <button id="touchDash" type="button" class="touch-btn w-12 h-12 sm:w-14 sm:h-14 rounded-2xl flex flex-col items-center justify-center text-xs font-bold text-amber-200" aria-label="Impulso Esquivar">
-            <span class="text-base leading-none">💨</span>
-            <span class="text-[9px]">ESQUIVAR</span>
-          </button>
-          <button id="touchJump" type="button" class="touch-btn w-14 h-14 sm:w-16 sm:h-16 rounded-2xl flex flex-col items-center justify-center text-xs font-bold text-amber-300 border-amber-300/70" aria-label="Saltar">
-            <span class="text-lg leading-none">▲</span>
-            <span class="text-[10px]">SALTAR</span>
-          </button>
-        </div>
-      </div>
-
   </main>
 
-  <!-- FOOTER CONTROLS & LEGEND -->
-  <footer class="game-ui w-full max-w-6xl mx-auto mt-2">
-    <div class="pbr-card rounded-xl px-4 py-2 flex flex-wrap items-center justify-between gap-2 text-xs text-purple-200/90">
-      <div class="flex flex-wrap items-center gap-x-4 gap-y-1">
-        <span><strong class="text-amber-300">Controles:</strong> [A/D o ◀/▶] Moverse / Liana</span>
-        <span>[W / ▲ / Espacio] Salto y Doble Salto</span>
-        <span>[Shift o K] Impulso Rápido para Esquivar Libélulas 💨</span>
-        <span>[X o J] Onda Melódica 𝄞</span>
-      </div>
-      <div class="flex items-center gap-2 text-[11px] text-cyan-300 font-semibold">
-        <span>💎 Nivel 4: Cueva de Libélulas Gigantes + Tesoro Final</span>
-      </div>
+  <dialog id="statusModal" class="game-menu" aria-labelledby="modalTitle">
+    <p id="levelName" class="menu-eyebrow"></p>
+    <h2 id="modalTitle"></h2>
+    <img id="modalPetroniaImg" src="assets/sprites/petronia_celebrate.png" alt="" width="62" height="84" hidden>
+    <p id="modalDesc"></p>
+
+    <div id="menuPrimaryActions" class="menu-actions">
+      <button id="btnModalPrimary" class="opening-action game-continue" type="button" autofocus>Continuar</button>
+      <button id="btnModalRestart" class="opening-action" type="button">Reiniciar nivel</button>
     </div>
-  </footer>
+
+    <dl id="modalStats" class="game-stats">
+      <div><dt>Vidas</dt><dd id="statLives"></dd></div>
+      <div><dt>Armonía</dt><dd id="statHarmony"></dd></div>
+      <div><dt>Notas</dt><dd id="statNotes"></dd></div>
+      <div><dt>Claves</dt><dd id="statClefs"></dd></div>
+      <div><dt>Puntos</dt><dd id="statScore"></dd></div>
+    </dl>
+
+    <div class="menu-actions" role="group" aria-label="Elegir nivel">
+      <button id="btnLevel1" class="opening-action" type="button">Bosque</button>
+      <button id="btnLevel2" class="opening-action" type="button">Cumbres</button>
+      <button id="btnLevel3" class="opening-action" type="button">Selva</button>
+      <button id="btnLevel4" class="opening-action" type="button">Cueva</button>
+    </div>
+    <div class="menu-actions">
+      <button id="btnAudioToggle" class="opening-action" type="button" aria-pressed="true">Efectos de sonido</button>
+      <button id="btnShareApp" class="opening-action" type="button">Compartir</button>
+      <button id="btnModalCover" class="opening-action" type="button">Volver a la portada</button>
+    </div>
+    <details id="pbrPanel">
+      <summary>Controles y ajustes visuales</summary>
+      <p>Moverse o balancear la liana: A/D o flechas. Saltar: W, ↑ o espacio. Onda: X o J. Esquivar: Shift o K.</p>
+      <label>Relieve <input id="sliderNormal" type="range" min="0" max="200" value="120"></label>
+      <label>Brillo <input id="sliderSpecular" type="range" min="0" max="200" value="135"></label>
+      <label>Profundidad <input id="sliderDepth" type="range" min="8" max="42" value="24"></label>
+      <label>Parallax <input id="sliderParallax" type="range" min="20" max="180" value="100"></label>
+    </details>
+  </dialog>
 
   <!-- HIDDEN SPRITE ASSETS -->
   <div class="hidden" aria-hidden="true">
@@ -308,6 +149,6 @@
     <p id="shareFeedbackMsg" class="share-feedback" role="status"></p>
   </dialog>
 
-  <script src="js/game.js" defer></script>
+  <script src="js/game-v2.js" defer></script>
 </body>
 </html>
