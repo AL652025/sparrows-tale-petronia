@@ -1,0 +1,26 @@
+{
+  "id": "./",
+  "name": "Sparrow’s Tale: Petronia and the Hidden Treasure",
+  "short_name": "Sparrow’s Tale",
+  "description": "Acompaña a Petronia en una aventura de plataformas 2.5D con cuatro niveles. Pulsa Play the Game y juega en tu navegador.",
+  "start_url": "./",
+  "scope": "./",
+  "lang": "es",
+  "display": "standalone",
+  "background_color": "#190f24",
+  "theme_color": "#190f24",
+  "icons": [
+    {
+      "src": "assets/icon_192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/icon_512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
